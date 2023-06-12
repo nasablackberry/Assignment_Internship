@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="script.js"></script>
+</head>
+<body>
+  <div id="employee-details"></div>
+
+  <a href="index.html">Back to Employee List</a> 
+
+  <script>
+
+    var params = new URLSearchParams(window.location.search);
+    var employeeId = params.get('id');
+
+    var employee = employees.find(emp => emp.id === parseInt(employeeId));
+
+    var detailsContainer = document.getElementById('employee-details');
+    detailsContainer.innerHTML = '<h1>Employee Details</h1>' +
+      '<p>ID: ' + employee.id + '</p>' +
+      '<p>Name: ' + employee.name + '</p>' +
+      '<p>Department: ' + employee.dept + '</p>' +
+      '<p>Address: ' + employee.address + '</p>';
+  </script>
+</body>
+</html>
