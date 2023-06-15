@@ -11,7 +11,17 @@
   <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 </head>
 <body>
-  <div id="map" style="width: 100%; height:100vh;"></div>
+  <div id="map" style="width: 100%; height:69vh;"></div>
+  <h6>Enter Employee Id :
+  <input type="number" id="id-input" min="1" max="50" placeholder="Employee ID">
+  </h6>
+  <h6>Enter Latitude : 
+  <input type="text" id="latitude-input" placeholder="Latitude">
+  </h6>
+  <h6>Enter Longitude : 
+  <input type="text" id="longitude-input" placeholder="Longitude">
+  </h6>
+  <button onclick="updateCoordinates()">Update Coordinates</button>
 
   <script>
     var map = L.map('map').setView([18.5733245,73.802893], 10);
@@ -23,12 +33,58 @@
     var markers = L.markerClusterGroup();
 
     employees.forEach(function(employee) {
-      var marker = L.marker(employee.coordinates);
+      var marker = L.marker(employee.coordinates, { id: employee.id });
       marker.bindPopup('<a href="employee_details.html?id=' + employee.id + '">' + employee.name + '</a><br>' + employee.dept);
       markers.addLayer(marker);
     });
 
     map.addLayer(markers);
+
+    
+    var params = new URLSearchParams(window.location.search);
+    var employeeId = params.get('id');
+
+    var employee = employees.find(emp => emp.id === parseInt(employeeId));
+
+    var detailsContainer = document.getElementById('employee-details');
+    var idElement = document.getElementById('employee-id');
+    var nameElement = document.getElementById('employee-name');
+    var deptElement = document.getElementById('employee-dept');
+    var addressElement = document.getElementById('employee-address');
+    var latitudeElement = document.getElementById('employee-latitude');
+    var longitudeElement = document.getElementById('employee-longitude');
+
+    idElement.textContent = employee.id;
+    nameElement.textContent = employee.name;
+    deptElement.textContent = employee.dept;
+    addressElement.textContent = employee.address;
+    latitudeElement.textContent = employee.coordinates[0];
+    longitudeElement.textContent = employee.coordinates[1];
+
+
+  function updateCoordinates() {
+  var id = document.getElementById('id-input').value;
+  var newLatitude = document.getElementById('latitude-input').value;
+  var newLongitude = document.getElementById('longitude-input').value;
+
+  var marker = markers.getLayers().find(function(layer) {
+    return layer.options.id === parseInt(id);
+  });
+
+  if (marker) {
+    marker.setLatLng([newLatitude, newLongitude]);
+    var employee = employees.find(emp => emp.id === parseInt(id));
+    if (employee) {
+      employee.coordinates[0] = newLatitude;
+      employee.coordinates[1] = newLongitude;
+      latitudeElement.textContent = newLatitude;
+      longitudeElement.textContent = newLongitude;
+    }
+  }
+}
+
+
   </script>
+  
 </body>
 </html>
